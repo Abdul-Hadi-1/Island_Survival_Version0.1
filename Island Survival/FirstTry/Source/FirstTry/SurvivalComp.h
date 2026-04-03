@@ -9,6 +9,8 @@
 class ADayandNight;
 class ACharacter;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerDied);
+
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class FIRSTTRY_API USurvivalComp : public UActorComponent
 {
@@ -67,12 +69,6 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Survival")
-	void EatFood();
-
-	UFUNCTION(BlueprintCallable, Category = "Survival")
-	void DrinkWater();
-
-	UFUNCTION(BlueprintCallable, Category = "Survival")
 	float GetHealthPercent() const;
 
 	UFUNCTION(BlueprintCallable, Category = "Survival")
@@ -89,4 +85,15 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Survival")
 	bool Eating();
+
+	UPROPERTY(BlueprintAssignable, Category = "Survival")
+	FPlayerDied OnPlayerDied;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Survival")
+	bool bGameOver = false;
+
+	UFUNCTION(BlueprintCallable, Category = "Survival")
+	bool IsDead() const;
+
+	void CheckForDeath();
 };

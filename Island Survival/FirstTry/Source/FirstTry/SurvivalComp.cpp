@@ -96,19 +96,9 @@ void USurvivalComp::UpdateSurvival(float DeltaTime)
 	}
 
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
+	CheckForDeath();
 }
 
-void USurvivalComp::EatFood()
-{
-	HoursSinceLastMeal = 0.0f;
-	UE_LOG(LogTemp, Warning, TEXT("SurvivalComp: Meal timer reset"));
-}
-
-void USurvivalComp::DrinkWater()
-{
-	HoursSinceLastDrink = 0.0f;
-	UE_LOG(LogTemp, Warning, TEXT("SurvivalComp: Drink timer reset"));
-}
 
 float USurvivalComp::GetHealthPercent() const
 {
@@ -165,6 +155,7 @@ void USurvivalComp::AdvanceSurvivalByHours(float HoursSkipped)
 	}
 
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
+	CheckForDeath();
 
 	UE_LOG(LogTemp, Warning, TEXT("SurvivalComp: Advanced survival by %f hours during sleep."), HoursSkipped);
 }
@@ -219,4 +210,23 @@ bool USurvivalComp::Eating()
 	UE_LOG(LogTemp, Log, TEXT("SurvivalComp: Player ate Fish. Hunger timer reset."));
 	return true;
 
+}
+bool USurvivalComp::IsDead() const
+{
+	return CurrentHealth <= 0.0f;
+}
+
+void USurvivalComp::CheckForDeath()
+{
+	if (bGameOver)
+	{
+		return;
+	}
+
+	if (CurrentHealth <= 0.0f)
+	{
+		bGameOver = true;
+		bEnableSurvivalSystem = false;
+		OnPlayerDied.Broadcast();
+	}
 }
