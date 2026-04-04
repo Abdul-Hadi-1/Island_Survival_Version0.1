@@ -36,5 +36,8 @@
 			"Enabled": true,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/69276853b46e4f11931b80d22a9e82dd"
 		}
+	],
+	"TargetPlatforms": [
+		"Windows"
 	]
 }
