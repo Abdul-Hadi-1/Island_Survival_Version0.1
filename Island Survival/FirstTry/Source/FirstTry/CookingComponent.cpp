@@ -14,7 +14,6 @@ UCookingComponent::UCookingComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
 void UCookingComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -29,21 +28,16 @@ void UCookingComponent::BeginPlay()
 	}
 }
 
+
 void UCookingComponent::CacheDayNightActor()
 {
 	if (DayNightRef)
 	{
 		return;
 	}
-
 	DayNightRef = Cast<ADayandNight>(
 		UGameplayStatics::GetActorOfClass(GetWorld(), ADayandNight::StaticClass())
 	);
-
-	if (!DayNightRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: DayandNight actor not found in level."));
-	}
 }
 
 void UCookingComponent::CacheFishingManager()
@@ -52,13 +46,7 @@ void UCookingComponent::CacheFishingManager()
 	{
 		return;
 	}
-
 	FishingManagerRef = GetOwner()->FindComponentByClass<UFishingPuzzleManager>();
-
-	if (!FishingManagerRef)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: FishingPuzzleManager component not found on owner."));
-	}
 }
 
 int32 UCookingComponent::GetCurrentDayNumber() const
@@ -67,9 +55,10 @@ int32 UCookingComponent::GetCurrentDayNumber() const
 	{
 		return DayNightRef->DayNumber;
 	}
-
 	return 1;
 }
+
+
 
 bool UCookingComponent::CanStartCooking() const
 {
@@ -88,7 +77,6 @@ bool UCookingComponent::HasCookedFish() const
 	{
 		return CookedFish > 0;
 	}
-
 	return Inventory->GetItemCount("CookedFish") > 0;
 }
 
@@ -140,34 +128,24 @@ void UCookingComponent::HandleCookingPuzzleSolved()
 {
 	if (!FishingManagerRef)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: FishingManagerRef is null."));
 		return;
 	}
-
 	if (!FishingManagerRef->HasUncookedFish())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: No uncooked fish available to cook."));
 		return;
 	}
-
 	UInventoryComponent* Inventory = GetOwner()->FindComponentByClass<UInventoryComponent>();
 	if (!Inventory)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: InventoryComponent is null."));
 		return;
 	}
-
 	Inventory->RemoveItem("UncookedFish", 2);
 	Inventory->AddItem("CookedFish", 2);
-
 	if (FishingManagerRef)
 	{
 		FishingManagerRef->UncookedFish = Inventory->GetItemCount("UncookedFish");
 	}
-
 	CookedFish = Inventory->GetItemCount("CookedFish");
-
-	UE_LOG(LogTemp, Log, TEXT("Cooking puzzle solved. CookedFish is now: %d"), CookedFish);
 }
 
 void UCookingComponent::AddCookedFish(int32 Amount)
@@ -175,10 +153,8 @@ void UCookingComponent::AddCookedFish(int32 Amount)
 	UInventoryComponent* Inventory = GetOwner()->FindComponentByClass<UInventoryComponent>();
 	if (!Inventory)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: InventoryComponent is null."));
 		return;
 	}
-
 	if (Amount > 0)
 	{
 		Inventory->AddItem("CookedFish", Amount);
@@ -187,11 +163,11 @@ void UCookingComponent::AddCookedFish(int32 Amount)
 	{
 		Inventory->RemoveItem("CookedFish", FMath::Abs(Amount));
 	}
-
 	CookedFish = Inventory->GetItemCount("CookedFish");
-
-	UE_LOG(LogTemp, Log, TEXT("Added %d cooked fish. CookedFish is now: %d"), Amount, CookedFish);
 }
+
+
+
 
 bool UCookingComponent::EatCookedFish()
 {
@@ -219,20 +195,16 @@ void UCookingComponent::StartCooking(UUserWidget* FocusWidget)
 {
 	if (bIsCooking)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: StartCooking called but player is already cooking."));
 		return;
 	}
-
 	ACharacter* CharacterOwner = Cast<ACharacter>(GetOwner());
 	if (CharacterOwner && CharacterOwner->GetCharacterMovement())
 	{
 		CharacterOwner->GetCharacterMovement()->StopMovementImmediately();
 		CharacterOwner->GetCharacterMovement()->DisableMovement();
 	}
-
 	APawn* PawnOwner = Cast<APawn>(GetOwner());
 	APlayerController* PC = PawnOwner ? Cast<APlayerController>(PawnOwner->GetController()) : nullptr;
-
 	if (PC)
 	{
 		PC->bShowMouseCursor = true;
@@ -244,10 +216,7 @@ void UCookingComponent::StartCooking(UUserWidget* FocusWidget)
 			false
 		);
 	}
-
 	bIsCooking = true;
-
-	UE_LOG(LogTemp, Log, TEXT("CookingComponent: Cooking started."));
 }
 
 void UCookingComponent::StopCooking()
@@ -259,18 +228,12 @@ void UCookingComponent::StopCooking()
 		MoveComp->SetMovementMode(MOVE_Walking);
 		MoveComp->Velocity = FVector::ZeroVector;
 	}
-	UE_LOG(LogTemp, Warning, TEXT("CookingComponent: Movement mode restored to Walking"));
-
 	APawn* PawnOwner = Cast<APawn>(GetOwner());
 	APlayerController* PC = PawnOwner ? Cast<APlayerController>(PawnOwner->GetController()) : nullptr;
-
 	if (PC)
 	{
 		PC->bShowMouseCursor = false;
 		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
 	}
-
 	bIsCooking = false;
-
-	UE_LOG(LogTemp, Log, TEXT("CookingComponent: Cooking stopped."));
 }
