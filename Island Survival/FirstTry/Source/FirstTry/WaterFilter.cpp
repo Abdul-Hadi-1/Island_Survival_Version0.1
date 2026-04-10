@@ -234,11 +234,11 @@ int32 UWaterFilter::GetPurificationPuzzleLayerCount() const
 	{
 		return 4;
 	}
-	if (Day >= 3 && Day <= 5)
+	if (Day >= 3 && Day <= 4)
 	{
 		return 6;
 	}
-	if (Day >= 6 && Day <= 7)
+	if (Day >= 5 && Day <= 7)
 	{
 		return 8;
 	}

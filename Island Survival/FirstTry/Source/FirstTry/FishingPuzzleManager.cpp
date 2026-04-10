@@ -117,7 +117,6 @@ void UFishingPuzzleManager::AddUncookedFish(int32 Amount)
 
 	UncookedFish = Inventory->GetItemCount("UncookedFish");
 
-	UE_LOG(LogTemp, Log, TEXT("Added %d uncooked fish. UncookedFish is now: %d"), Amount, UncookedFish);
 }
 
 bool UFishingPuzzleManager::HasUncookedFish() const

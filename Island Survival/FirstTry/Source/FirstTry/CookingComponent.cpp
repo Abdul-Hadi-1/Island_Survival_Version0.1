@@ -169,28 +169,6 @@ void UCookingComponent::AddCookedFish(int32 Amount)
 
 
 
-bool UCookingComponent::EatCookedFish()
-{
-	UInventoryComponent* Inventory = GetOwner()->FindComponentByClass<UInventoryComponent>();
-	if (!Inventory)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: InventoryComponent is null."));
-		return false;
-	}
-
-	if (Inventory->GetItemCount("CookedFish") <= 0)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: No cooked fish available to eat."));
-		return false;
-	}
-
-	Inventory->RemoveItem("CookedFish", 1);
-	CookedFish = Inventory->GetItemCount("CookedFish");
-
-	UE_LOG(LogTemp, Log, TEXT("Cooked fish eaten. CookedFish is now: %d"), CookedFish);
-	return true;
-}
-
 void UCookingComponent::StartCooking(UUserWidget* FocusWidget)
 {
 	if (bIsCooking)
@@ -236,4 +214,33 @@ void UCookingComponent::StopCooking()
 		UWidgetBlueprintLibrary::SetInputMode_GameOnly(PC);
 	}
 	bIsCooking = false;
+}
+
+
+
+
+
+
+
+
+bool UCookingComponent::EatCookedFish()
+{
+	UInventoryComponent* Inventory = GetOwner()->FindComponentByClass<UInventoryComponent>();
+	if (!Inventory)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: InventoryComponent is null."));
+		return false;
+	}
+
+	if (Inventory->GetItemCount("CookedFish") <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CookingComponent: No cooked fish available to eat."));
+		return false;
+	}
+
+	Inventory->RemoveItem("CookedFish", 1);
+	CookedFish = Inventory->GetItemCount("CookedFish");
+
+	UE_LOG(LogTemp, Log, TEXT("Cooked fish eaten. CookedFish is now: %d"), CookedFish);
+	return true;
 }
